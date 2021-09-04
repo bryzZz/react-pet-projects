@@ -1,29 +1,46 @@
-export default function Table(props){
+import './Table.css';
+
+export default function Table({data, onSort, sortField, sortDirection, onRowClick}){
+    let thClass, currentClass;
+
+    if(sortDirection === 'asc'){
+        thClass = "arrow-down";
+        currentClass = "arrow-down current";
+    }else{
+        thClass = "arrow-up";
+        currentClass = "arrow-up current";
+    }
+
     return (
-        <table className='table table-sm table-striped table-hover'>
+        <table className='Table table table-sm table-striped table-hover'>
             <thead>
                 <tr>
                     {/* <th>number</th> */}
                     <th 
-                        onClick={() => props.onSort('id')}
-                    >id {props.sortField === 'id' ? <small>{props.sortDirection}</small> : ''}</th>
+                        className={ sortField === 'id' ? currentClass : thClass }
+                        onClick={() => onSort('id')}
+                    >id</th>
                     <th
-                        onClick={() => props.onSort('firstName')}
-                    >firstName {props.sortField === 'firstName' ? <small>{props.sortDirection}</small> : ''}</th>
+                        className={ sortField === 'firstName' ? currentClass : thClass }
+                        onClick={() => onSort('firstName')}
+                    >firstName</th>
                     <th
-                        onClick={() => props.onSort('lastName')}
-                    >lastName {props.sortField === 'lastName' ? <small>{props.sortDirection}</small> : ''}</th>
+                        className={ sortField === 'lastName' ? currentClass : thClass }
+                        onClick={() => onSort('lastName')}
+                    >lastName</th>
                     <th
-                        onClick={() => props.onSort('email')}
-                    >email {props.sortField === 'email' ? <small>{props.sortDirection}</small> : ''}</th>
+                        className={ sortField === 'email' ? currentClass : thClass }
+                        onClick={() => onSort('email')}
+                    >email</th>
                     <th
-                        onClick={() => props.onSort('phone')}
-                    >phone {props.sortField === 'phone' ? <small>{props.sortDirection}</small> : ''}</th>
+                        className={ sortField === 'phone' ? currentClass : thClass }
+                        onClick={() => onSort('phone')}
+                    >phone</th>
                 </tr>
             </thead>
             <tbody>
-                { props.data.map(item => (
-                    <tr key={ item.id + item.phone } onClick={() => props.onRowClick(item)}>
+                { data.map(item => (
+                    <tr key={ item.id + item.phone } onClick={() => onRowClick(item)}>
                         {/* <td>{ item.num }</td> */}
                         <td>{ item.id }</td>
                         <td>{ item.firstName }</td>

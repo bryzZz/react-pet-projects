@@ -1,26 +1,8 @@
-import React from "react";
+import './AddForm.css';
 
-export default class AddForm extends React.Component{
-    state = {
-        isFormVisible: false
-    }
-
-    render(){
-
-        if(!this.state.isFormVisible){
-            return (
-                <div className="AddForm d-flex justify-content-end">
-                    <button
-                        className="btn btn-outline-primary"
-                        onClick={ () => {
-                            this.setState({isFormVisible: true})
-                        } }
-                    >Добавить</button>
-                </div>
-            );
-        }
-
-        return (
+export default function AddForm(){
+    return (
+        <div className="overlay">
             <form className="row g-3 needs-validation mb-2 mt-2 border-top border-bottom" noValidate>
                 <div className="col-md-4">
                     <label htmlFor="validationCustom01" className="form-label">Id</label>
@@ -46,6 +28,6 @@ export default class AddForm extends React.Component{
                     <button className="btn btn-primary" type="submit">Submit form</button>
                 </div>
             </form>
-        );
-    }
+        </div>
+    );
 }

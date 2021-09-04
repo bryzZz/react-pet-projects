@@ -2,6 +2,8 @@ import React from 'react';
 import './App.css';
 
 import _ from 'lodash';
+import ReactPaginate from 'react-paginate';
+import Modal from 'react-modal';
 
 import Loader from '../Loader/Loader';
 import Table from '../Table/Table';
@@ -18,15 +20,13 @@ export default class App extends React.Component{
     data: [],
     pages: {
       currentPage: 0,
-      currentPageData: null,
-      minPage: 0,
-      maxPage: null,
       pageSize: 50,
     },
     term: '',
     sortDirection: 'asc',
     sortField: null,
-    row: null
+    row: null,
+    showModalForm: false
   }
 
   dataLinks = {
@@ -58,25 +58,22 @@ export default class App extends React.Component{
     }));
   }
 
-  getOnePage = data => {
-    const { pageSize, currentPage } = this.state.pages;
+  getOnePage = (data, currentPage, pageSize) => {
     const clonedData = data.concat()
 
     return clonedData.splice(pageSize * currentPage, pageSize);
   }
 
-  changePage = n => {
-    const { currentPage, minPage, maxPage } = this.state.pages;
+  handlePageClick = (data) => {
+    let selected = data.selected;
 
-    if(currentPage + n >= minPage && currentPage + n <= maxPage){
-      this.setState((state) => ({
-        pages: {
-          ...state.pages,
-          currentPage: state.pages.currentPage + n
-        }
-      }));
-    }
-  }
+    this.setState((state) => ({
+      pages: {
+        ...state.pages,
+        currentPage: selected
+      }
+    }));
+  };
 
   onSort = colName => {
     const cloneData = this.state.data.concat();
@@ -103,9 +100,13 @@ export default class App extends React.Component{
   }
 
   onUpdateTerm = term => {
-    this.setState({
-      term
-    })
+    this.setState((state) => ({
+      term,
+      pages: {
+        ...state.pages,
+        currentPage: 0
+      }
+    }));
   }
 
   filterPosts = (items, term) => {
@@ -118,9 +119,12 @@ export default class App extends React.Component{
         || lastName.toLowerCase().includes(term.toLowerCase())
         || email.toLowerCase().includes(term.toLowerCase())
         || phone.toLowerCase().includes(term.toLowerCase())
-        )
+        );
     });
   }
+
+  handleOpenModal = () => this.setState({showModalForm: true});
+  handleCloseModal = () => this.setState({showModalForm: false});
 
   render(){
     const {
@@ -130,8 +134,9 @@ export default class App extends React.Component{
       sortDirection,
       sortField,
       row,
-      pages: { maxPage, minPage, currentPage, pageSize },
-      term
+      pages: { currentPage, pageSize },
+      term,
+      showModalForm
     } = this.state;
 
     let content;
@@ -143,13 +148,18 @@ export default class App extends React.Component{
         content = <Loader />
       }else{
         const filtredData = this.filterPosts(data, term);
-        const onePageData = this.getOnePage(filtredData);
+        const onePageData = this.getOnePage(filtredData, currentPage, pageSize);
 
         content = (
           <>
             <FilterPanel onUpdateTerm={ this.onUpdateTerm } />
 
-            <AddForm />
+            <button onClick={this.handleOpenModal}>Trigger Modal</button>
+            {
+              showModalForm 
+              &&
+              <AddForm />
+            }
 
             <Table
               data={ onePageData }
@@ -160,20 +170,27 @@ export default class App extends React.Component{
             />
 
             {
-              data.length > pageSize 
+              filtredData.length > pageSize 
               && 
-              <div className="pagination d-flex justify-content-end">
-                <button
-                  className="btn btn-outline-primary"
-                  disabled={ minPage === currentPage }
-                  onClick={ () => this.changePage(-1) }
-                >prev</button>
-                <button
-                  className="btn btn-outline-primary"
-                  disabled={ maxPage === currentPage }
-                  onClick={ () => this.changePage(1) }
-                >next</button>
-              </div>
+              <ReactPaginate
+                previousLabel={'previous'}
+                previousClassName='page-item'
+                previousLinkClassName='page-link'
+                pageClassName='page-item'
+                pageLinkClassName='page-link'
+                nextLabel={'next'}
+                nextClassName='page-item'
+                nextLinkClassName='page-link'
+                breakLabel={'...'}
+                breakClassName={'break-me'}
+                pageCount={Math.ceil(filtredData.length / pageSize)}
+                forcePage={0}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={this.handlePageClick}
+                containerClassName={'pagination justify-content-center'}
+                activeClassName={'active'}
+              />
             }
 
             { row && <DetailRowView data={ row } /> }

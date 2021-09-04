@@ -1,0 +1,46 @@
+.Table{
+    font-size: 15px;
+}
+
+.Table th{
+    cursor: pointer;
+}
+
+.Table th:hover{
+    background-color: rgba(0, 0, 0, .05);
+}
+
+.Table th.arrow-down{
+    cursor: url('./arrow_down.svg'), pointer;
+
+    position: relative;
+}
+
+.Table th.arrow-up{
+    cursor: url('./arrow_up.svg'), pointer;
+
+    position: relative;
+}
+
+.Table th.arrow-down.current{
+    cursor: url('./arrow_up.svg'), pointer;
+}
+.Table th.arrow-up.current{
+    cursor: url('./arrow_down.svg'), pointer;
+}
+
+.Table th.arrow-down.current::after, .Table th.arrow-up.current::after{
+    position: absolute;
+    top: 50%;
+    right: 5%;
+
+    transform: translateY(-35%);
+}
+
+.Table th.arrow-down.current::after{
+    content: url('./arrow_down.svg');
+}
+
+.Table th.arrow-up.current::after{
+    content: url('./arrow_up.svg');
+}
